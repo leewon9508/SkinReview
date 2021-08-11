@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bm">
+	<!--글 쓰기 -->
+	<insert id="boardwriter" parameterType="boarddto">
+		INSERT INTO
+		BOARD210608
+		(BNUMBER, BPRODUCT, BBRAND, BWRITER, BPASSWORD, BMERIT, BFLAW,
+		BCATRGORT, BFILENAME, BSCORE, BDATE, BHITS)
+		VALUES(BOARD210608_SEQ.NEXTVAL,#{bproduct},#{bbrand},#{bwriter},#{bpassword},#{bmerit},#{bflaw},#{bcatrgort},#{bfilename},#{bscore},SYSDATE,0)
+	</insert>
+
+	<!-- 페이징 처리 목록 -->
+	<!-- 게시글 갯수 가지고 오기 -->
+	<select id="listcount" resultType="int">
+		SELECT COUNT(BNUMBER) FROM
+		BOARD210608
+	</select>
+
+	<!-- starRoe, endRow 기준으로 boardlist 가져오기 -->
+	<select id="boardpaging" parameterType="pagedto"
+		resultType="boarddto">
+		SELECT * FROM (SELECT B.*, ROW_NUMBER() OVER(ORDER BY
+		BNUMBER DESC)
+		AS RN FROM BOARD210608 B) WHERE RN BETWEEN #{startRow}
+		AND #{endRow}
+	</select>
+
+	<!-- 조회수 -->
+	<update id="boardhits" parameterType="int">
+		UPDATE BOARD210608
+		SET BHITS
+		= BHITS+1 WHERE BNUMBER=#{bnumber}
+	</update>
+
+	<!-- 글 조회 -->
+	<select id="boardview" parameterType="int" resultType="boarddto">
+		SELECT *
+		FROM BOARD210608 WHERE BNUMBER=#{bnumber}
+	</select>
+
+	<!-- 글 수정 요청 -->
+	<select id="boardupdate" parameterType="int"
+		resultType="boarddto">
+		SELECT * FROM BOARD210608 WHERE BNUMBER =#{bnumber}
+	</select>
+
+	<!-- 글 수정 처리 -->
+	<update id="updateprocess" parameterType="boarddto">
+		UPDATE BOARD210608 SET
+		BPRODUCT =#{bproduct}, BBRAND = #{bbrand}, BPASSWORD = #{bpassword},
+		BMERIT = #{bmerit}, BFLAW = #{bflaw}, BCATRGORT = #{bcatrgort},
+		BFILENAME
+		= #{bfilename}, BSCORE = #{bscore} WHERE BNUMBER=#{bnumber}
+	</update>
+
+	<!-- 내가 작성한 글 보기 -->
+	<select id="boardwritelist" parameterType="String"
+		resultType="boarddto">
+		SELECT * FROM BOARD210608 WHERE BWRITER=#{bwriter}
+	</select>
+
+	<!-- 관리자 글 강제 삭제 -->
+	<delete id="mboarddelete" parameterType="int">
+		DELETE FROM BOARD210608
+		WHERE BNUMBER=#{bnumber}
+	</delete>
+
+	<!-- 글 삭제 -->
+	<delete id="boarddelete" parameterType="int">
+		DELETE FROM BOARD210608
+		WHERE BNUMBER=#{bnumber}
+	</delete>
+
+	<!-- 검색 -->
+	<select id="boardsearch" parameterType="java.util.HashMap"
+		resultType="boarddto">
+		SELECT * FROM BOARD210608
+		<include refid="search"></include>
+	</select>
+
+	<!-- 검색 게시글 갯수 가지고 오기 -->
+	<select id="slistcount" parameterType="java.util.HashMap"
+		resultType="int">
+		SELECT COUNT(BNUMBER) FROM
+		BOARD210608
+		<include refid="search"></include>
+	</select>
+
+	<!-- 검색 boardlist 가져오기 -->
+	<select id="sboardpaging" parameterType="java.util.HashMap"
+		resultType="boarddto">
+		SELECT * FROM (SELECT B.*, ROW_NUMBER() OVER(ORDER BY BNUMBER DESC)
+		AS
+		RN FROM BOARD210608 B)
+		<include refid="search"></include>
+		AND RN BETWEEN #{startRow}
+		AND #{endRow}
+	</select>
+
+	<!-- 스킨 리스트 갯수 -->
+	<select id="skinlistcount" resultType="int">
+		SELECT COUNT(BNUMBER) FROM
+		BOARD210608 WHERE
+		BCATRGORT='Skin'
+	</select>
+
+	<!-- 스킨 리스트 가지고 오기 -->
+	<select id="skinpage" parameterType="pagedto"
+		resultType="boarddto">
+		SELECT * FROM (SELECT B.*, ROW_NUMBER() OVER(ORDER BY
+		BNUMBER DESC)
+		AS RN FROM BOARD210608 B) WHERE BCATRGORT='Skin' AND RN
+		BETWEEN #{startRow}
+		AND #{endRow}
+	</select>
+
+	<!-- 로션 리스트 갯수 -->
+	<select id="lotionlistcount" resultType="int">
+		SELECT COUNT(BNUMBER)
+		FROM
+		BOARD210608 WHERE
+		BCATRGORT='Lotion'
+	</select>
+
+	<!-- 로션 리스트 가지고 오기 -->
+	<select id="lotionpage" parameterType="pagedto"
+		resultType="boarddto">
+		SELECT * FROM (SELECT B.*, ROW_NUMBER() OVER(ORDER BY
+		BNUMBER DESC)
+		AS RN FROM BOARD210608 B) WHERE BCATRGORT='Lotion' AND RN
+		BETWEEN #{startRow}
+		AND #{endRow}
+	</select>
+
+	<!-- 립밤 리스트 갯수 -->
+	<select id="liplistcount" resultType="int">
+		SELECT COUNT(BNUMBER) FROM
+		BOARD210608 WHERE
+		BCATRGORT='Lip'
+	</select>
+
+	<!-- 립밤 리스트 가지고 오기 -->
+	<select id="lippage" parameterType="pagedto"
+		resultType="boarddto">
+		SELECT * FROM (SELECT B.*, ROW_NUMBER() OVER(ORDER BY
+		BNUMBER DESC)
+		AS RN FROM BOARD210608 B) WHERE BCATRGORT='Lip' AND RN
+		BETWEEN #{startRow}
+		AND #{endRow}
+	</select>
+
+	<!-- 반복 문 -->
+	<sql id="search">
+		<choose>
+			<when test="type == 'bproduct'">
+				WHERE BPRODUCT LIKE '%'||#{word}||'%'
+			</when>
+			<when test="type == 'bbrand'">
+				WHERE BBRAND LIKE '%'||#{word}||'%'
+			</when>
+			<when test="type == 'bwriter'">
+				WHERE BWRITER LIKE '%'||#{word}||'%'
+			</when>
+		</choose>
+	</sql>
+</mapper>
+  

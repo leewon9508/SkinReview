@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+ <mapper namespace="cm"> 
+ <!-- 댓글 등록 -->
+	<insert id = "commentwrite" parameterType = "commentdto">
+		INSERT INTO COMMENT210608(CNUMBER,CBNUMBER,CWRITER,CCONTENTS,CDATE)
+			VALUES(COMMENT210608_SEQ.NEXTVAL,#{cbnumber},#{cwriter},#{ccontents},SYSDATE)
+	</insert>
+	
+	<!-- 댓글 등록 후 리스트 가져오기 -->
+	<select id = "commentlist" parameterType = "int" resultType = "commentdto">
+		SELECT * FROM COMMENT210608 WHERE CBNUMBER=#{cbnumber} ORDER BY CNUMBER DESC
+	</select>
+	
+	<!-- 댓글 삭제 -->
+	<delete id = "commentdelete" parameterType = "commentdto">
+		DELETE FROM COMMENT210608 WHERE CNUMBER=#{cnumber}
+	</delete>
+	
+	<!-- 댓글 등록 후 리스트 가져오기 -->
+	<select id = "dcommentlist" parameterType = "int" resultType = "commentdto">
+		SELECT * FROM COMMENT210608 WHERE CBNUMBER=#{cbnumber} ORDER BY CNUMBER DESC
+	</select>
+	
+ </mapper>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mm">
+	<!-- 회원 가입 -->
+	<insert id="memberjoin" parameterType="memberdto">
+		INSERT INTO MEMBER210608
+		(MID,MPASSWORD,MNAME,MPHON,MEMAIL)
+		VALUES(#{mid},#{mpassword},#{mname},#{mphon},#{memail})
+	</insert>
+
+	<!-- 아이디 중복확인 + 확인 -->
+	<select id="idcheck" parameterType="String" resultType="String">
+		SELECT
+		MID FROM MEMBER210608 WHERE MID=#{mid}
+	</select>
+
+	<!-- 아이디 + 비밀번호 체크 후 로그인 -->
+	<select id="idpwdcheck" parameterType="memberdto"
+		resultType="String">
+		SELECT MID FROM MEMBER210608 WHERE MID=#{mid} AND
+		MPASSWORD
+		=#{mpassword}
+	</select>
+
+	<!-- 로그인 -->
+	<select id="memberlogin" parameterType="memberdto"
+		resultType="String">
+		SELECT MID FROM MEMBER210608 WHERE MID=#{mid} AND
+		MPASSWORD
+		=#{mpassword}
+	</select>
+
+	<!-- 회원 목록 조회 -->
+	<select id="memberlist" resultType="memberdto">
+		SELECT * FROM MEMBER210608
+		WHERE MID NOT IN ('admin')
+		ORDER BY MID ASC
+	</select>
+
+	<!-- 회원 상세 조회 -->
+	<select id="memberview" parameterType="String"
+		resultType="memberdto">
+		SELECT * FROM MEMBER210608 WHERE MID=#{mid}
+	</select>
+
+	<!-- 관리자 회원 강제 탈퇴 -->
+	<delete id="mmemberdelete" parameterType="String">
+		DELETE FROM
+		MEMBER210608
+		WHERE MID=#{mid}
+	</delete>
+
+	<!-- 회원 탈퇴 -->
+	<delete id="memberdelete" parameterType="String">
+		DELETE FROM MEMBER210608
+		WHERE MID=#{mid}
+	</delete>
+
+	<!-- 마이페이지 -->
+	<select id="mypage" parameterType="String"
+		resultType="memberdto">
+		SELECT * FROM MEMBER210608 WHERE MID=#{mid}
+	</select>
+
+	<!-- 회원 정보 수정 요청 -->
+	<select id="memberupdate" parameterType="String"
+		resultType="memberdto">
+		SELECT * FROM MEMBER210608 WHERE MID=#{loginId}
+	</select>
+
+	<!-- 회원 정보 수정 처리 -->
+	<update id="updateprocess" parameterType="memberdto">
+		UPDATE MEMBER210608 SET
+		MPASSWORD=#{mpassword}, MPHON=#{mphon}, MEMAIL=#{memail} WHERE MID =
+		#{mid}
+	</update>
+</mapper>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

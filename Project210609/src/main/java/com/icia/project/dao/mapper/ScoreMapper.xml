@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="sm">
+
+	<!-- 별점 주기 -->
+	<insert id="scoregive" parameterType="scoredto">
+		INSERT INTO
+		SCORE210608(SNUMBER,SBNUMBER,SWRITER,SSCORE) VALUES
+		(SCORE210608_SEQ.NEXTVAL,#{sbnumber},#{swriter},#{sscore})
+	</insert>
+
+	<!-- 별점 출력 -->
+	<select id="scorelist" parameterType="int" resultType="scoredto">
+		SELECT *
+		FROM SCORE210608
+	</select>
+
+	<!-- 별점 글번호 + 작성자 중복 제어 -->
+	<select id="swritercheck" parameterType="scoredto"
+		resultType="String">
+		SELECT SBNUMBER FROM SCORE210608 WHERE SBNUMBER=#{sbnumber}
+		AND SWRITER=#{swriter}
+	</select>
+
+	<!-- 별점 삭제 -->
+	<delete id="scoredelete" parameterType="int">
+		DELETE FROM SCORE210608
+		WHERE SNUMBER=#{snumber}
+	</delete>
+
+	<!-- 별점 평균 -->
+	<select id="scoreavg" parameterType="int" resultType="_double">
+		SELECT
+		NVL(ROUND(AVG(SSCORE),2),0) FROM SCORE210608 WHERE SBNUMBER
+		=#{sbnumber}
+	</select>
+
+</mapper>
+ 
+ 
+ 
